@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SecureAuth SOC Lab
 
-## Getting Started
+A Security Operations Center (SOC) authentication monitoring lab built with Next.js and Supabase.
 
-First, run the development server:
+## Live Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+https://soc-lab-web.vercel.app/
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+SecureAuth SOC Lab simulates a real-world authentication monitoring system used by Security Operations Centers (SOC).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The system tracks login activity, detects suspicious behavior such as brute force attacks, calculates risk scores, and generates security alerts.
 
-## Learn More
+High-risk events trigger real-time email notifications to the SOC administrator.
 
-To learn more about Next.js, take a look at the following resources:
+This project demonstrates secure authentication monitoring architecture and detection logic in a modern web environment.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Authentication Monitoring
+- Successful login tracking
+- Failed login tracking
+- Account creation logging
 
-## Deploy on Vercel
+### Detection Engine
+- Brute force detection (5 failed attempts within 5 minutes)
+- Excessive IP detection
+- Risk scoring (Low / Medium / High)
+- Automatic account lock mechanism
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Alerting System
+- Automatic alert creation
+- Risk-based alert levels
+- Email notifications for high-risk activity
+- Alert management in dashboard
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### SOC Dashboard
+- Authentication event logs
+- Risk indicators
+- Login metadata
+- Event statistics summary
+
+## How to Test the System
+
+You may use any test email and password.
+
+⚠️ Please do NOT use real credentials.
+
+### To simulate a brute force attack:
+
+1. Go to Login page.
+2. Enter a valid email.
+3. Enter an incorrect password 5 times quickly.
+4. The system will:
+   - Detect brute force behavior
+   - Assign High risk score
+   - Lock the account temporarily
+   - Generate a security alert
+   - Send an email notification to the SOC administrator
+
+## System Flow
+
+1. Login attempt is recorded in `security_events`
+2. `/api/process-event` analyzes the event
+3. Detection rules are applied
+4. Risk score is calculated
+5. Alert is created if necessary
+6. High-risk events trigger an email notification
+
+## Tech Stack
+
+- Next.js (App Router)
+- Supabase (Authentication & Database)
+- Resend (Email alerts)
+- Vercel (Deployment)
+- React Hot Toast (UI notifications)
+
+## Security Notice
+
+This project is a demonstration lab environment.
+
+Users should:
+- Use test credentials only
+- Avoid using real passwords
+- Understand this is a monitoring simulation
+
+## Future Enhancements
+
+- Real-time alert streaming
+- Geo-location login detection
+- Advanced anomaly detection
+- Admin analytics dashboard
+- Threat intelligence integration
+---
+
+⭐ If you like this project, feel free to star the repository.
