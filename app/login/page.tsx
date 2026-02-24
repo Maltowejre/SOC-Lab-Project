@@ -15,13 +15,12 @@ export default function Login() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      alert("Please enter email and password");
+      toast.error("Please enter email and password");
       return;
     }
 
     setLoading(true);
 
-    
     let ip_address: string | null = null;
     let user_agent: string | null = null;
 
@@ -30,71 +29,43 @@ export default function Login() {
       const info = await infoRes.json();
       ip_address = info?.ip ?? null;
       user_agent = info?.userAgent ?? null;
-    } catch {
-      
-    }
+    } catch {}
 
-    
+
     try {
-      const { data: prof, error: profErr } = await supabase
+      const { data: prof } = await supabase
         .from("user_login_profile")
-        .select("locked_until, failed_attempts")
+        .select("locked_until")
         .eq("user_email", email)
         .maybeSingle();
 
-      
-      const lockedUntil = prof?.locked_until ? new Date(prof.locked_until) : null;
-      const now = new Date();
+      if (prof?.locked_until) {
+        const lockedUntil = new Date(prof.locked_until);
+        const now = new Date();
 
-      if (!profErr && lockedUntil && lockedUntil.getTime() > now.getTime()) {
-        const diffMs = lockedUntil.getTime() - now.getTime();
-        const diffMin = Math.ceil(diffMs / (60 * 1000));
+        if (lockedUntil.getTime() > now.getTime()) {
+          const diffMin = Math.ceil(
+            (lockedUntil.getTime() - now.getTime()) / 60000
+          );
 
-        
-        const { data: inserted } = await supabase
-          .from("security_events")
-          .insert([
-            {
-              event_type: "login_blocked",
-              user_email: email,
-              ip_address,
-              user_agent,
-              success: false,
-              metadata: {
-                source: "web_app",
-                reason: "account_locked",
-                locked_until: lockedUntil.toISOString(),
-                remaining_minutes: diffMin,
-                login_time: new Date().toISOString(),
-              },
-            },
-          ])
-          .select("id")
-          .single();
+          toast.error(
+            `Account locked. Try again in ${diffMin} minute(s).`
+          );
 
-        
-        if (inserted?.id) {
-          await fetch("/api/process-event", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ event_id: inserted.id }),
-          });
+          setLoading(false);
+          return;
         }
-
-        alert(`Account is locked. Try again in ${diffMin} minute(s).`);
-        setLoading(false);
-        return;
       }
-    } catch {
-      
-    }
+    } catch {}
+
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-   
+
+
     const { data: inserted } = await supabase
       .from("security_events")
       .insert([
@@ -106,7 +77,9 @@ export default function Login() {
           success: !error,
           metadata: {
             source: "web_app",
-            reason: error ? "invalid_credentials" : "authenticated",
+            reason: error
+              ? "invalid_credentials"
+              : "authenticated",
             login_time: new Date().toISOString(),
           },
         },
@@ -114,16 +87,15 @@ export default function Login() {
       .select("id")
       .single();
 
-    
     if (inserted?.id) {
-      await fetch("/api/process-event", {
+      fetch("/api/process-event", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ event_id: inserted.id }),
       });
     }
 
-    
+
     if (!error) {
       toast.success("Logged in successfully!");
       router.push("/dashboard");
