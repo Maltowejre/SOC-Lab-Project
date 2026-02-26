@@ -4,7 +4,7 @@ A Security Operations Center (SOC) authentication monitoring lab built with Next
 
 ## Live Demo
 
-https://soc-lab-web.vercel.app/
+https://auth-threat-monitor.vercel.app/
 
 ## Project Overview
 
