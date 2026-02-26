@@ -1,4 +1,4 @@
-# SecureAuth SOC Lab
+# SecureAuth Monitor Lab
 
 A Security Operations Center (SOC) authentication monitoring lab built with Next.js and Supabase.
 
@@ -8,7 +8,7 @@ https://auth-threat-monitor.vercel.app/
 
 ## Project Overview
 
-SecureAuth SOC Lab simulates a real-world authentication monitoring system used by Security Operations Centers (SOC).
+SecureAuth Monitor Lab simulates a real-world authentication monitoring system used by Security Operations Centers (SOC).
 
 The system tracks login activity, detects suspicious behavior such as brute force attacks, calculates risk scores, and generates security alerts.
 
